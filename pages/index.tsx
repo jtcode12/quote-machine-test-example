@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect, useState } from 'react';
 import { Subscription } from 'rxjs';
+import Heading from '../components/heading';
 import { Quote, QuoteMachine } from '../qm';
 
 const qm = new QuoteMachine();
@@ -29,25 +30,17 @@ const Index: FunctionComponent = () => {
     }
   };
 
-  const mapFontSize = (text: string) => {
-    console.log(text.length);
-    if (text.length < 20) return 'xxxl';
-    if (text.length < 40) return 'xxl';
-    if (text.length < 75) return 'xl';
-    if (text.length < 125) return 'l';
-    if (text.length < 200) return 'm';
-    return 's';
-  }
+
 
   return quote && (
     <div className="quotebox">
       <div className="quotebox-body">
-        <h1 sa-font-size={mapFontSize(quote.text)}>{ quote.text }</h1>
+        <Heading title={quote.text} />
         <cite sa-font-size="xl">{ quote.author }</cite>
       </div>
       <div className="quotebox-cta">
-        <button type="button" onClick={qm.goBack.bind(qm)}><span x-direction="left">◄</span></button>
-        <button type="button" onClick={qm.goForward.bind(qm)}><span x-direction="right">►</span></button>
+        <button type="button" onClick={qm.goBack.bind(qm)} data-testid="prevBtn"><span x-direction="left">◄</span></button>
+        <button type="button" onClick={qm.goForward.bind(qm)} data-testid="nextBtn"><span x-direction="right">►</span></button>
       </div>
     </div>
   );
