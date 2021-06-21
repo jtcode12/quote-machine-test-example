@@ -1,0 +1,95 @@
+@import './typography.scss';
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body,
+#__next {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background-color: rgb(73 170 151);
+}
+
+.quotebox {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .quotebox-body {
+    position: relative;
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    place-items: center;
+    background-color: rgb(252 247 240);
+    color: rgb(13 13 49);
+    margin-bottom: 1rem;
+    border-radius: 24px;
+    & > cite {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      color: rgb(43 125 107);
+    }
+  }
+
+
+  .quotebox-cta {
+    height: clamp(3rem, 25vmin, 16rem);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    & button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: clamp(3rem, 25vmin, 16rem);
+      height: 100%;
+      color: #fff3;
+      font-size: clamp(0.9rem, 15vmin, 10rem);
+      background-color: transparent;
+      border: none;
+      border-radius: 24px;
+      transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+
+      & > span {
+        display: inline-block;
+        transition: transform 0.35s cubic-bezier(0.075, 0.82, 0.165, 1);
+      }
+
+      &:hover,
+      &:focus {
+        color: rgb(252 247 240);
+        background-color: #fff3;
+        cursor: pointer;
+      }
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 8px #fff5;
+      }
+      &:active {
+        color: white;
+        & > span[x-direction="left"] {
+          transform: translateX(-6px);
+        }
+        & > span[x-direction="right"] {
+          transform: translateX(6px);
+        }
+      }
+    }
+  }
+}
