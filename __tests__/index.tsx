@@ -3,57 +3,52 @@ import userEvent from '@testing-library/user-event';
 import fetch from 'jest-fetch-mock';
 import Index from '../pages';
 
-
-test('Index page', async () => {
-  /**
-   * Mock fetch responses
-   */
-  fetch.mockResponse(JSON.stringify({
-    status:200,
-    result: {
-      id: '4r1f69b38178g4b7',
-      text: 'What we see depends mainly on what we look for.',
-      author:'John Lubbock',
-    },
-  }));
-
-  render(<Index />);
-
-  /**
-   * Ensure core element rendered on the screen
-   */
-  screen.getByText(/test your apps/i);
-  const prevBtn = screen.getByTestId('prevBtn');
-  const nextBtn = screen.getByTestId('nextBtn');
-
-  /**
-   * Test forward button
-   */
-  userEvent.click(nextBtn);
-  await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
+describe('Index Page', () => {
+  beforeEach(() => {
+    fetch.resetMocks();
+    fetch.mockResponse(JSON.stringify({
+      status:200,
+      result: {
+        id: '4r1f69b38178g4b7',
+        text: 'What we see depends mainly on what we look for.',
+        author:'John Lubbock',
+      },
+    }));
+    render(<Index />);
   });
-  screen.getByText(/John Lubbock/i);
 
-  /**
-   * Test back button
-   */
-  userEvent.click(prevBtn);
-  await waitFor(() => {
+  test('Ensure core elements rendered on the screen', () => {
     screen.getByText(/test your apps/i);
+    screen.getByTestId('prevBtn');
+    screen.getByTestId('nextBtn');
   });
 
-  /**
-   * Test right and left arrow key press
-   */
-  userEvent.type(nextBtn, '{arrowright}');
-  await waitFor(() => {
-    expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
-  });
-  screen.getByText(/John Lubbock/i);
-
-  userEvent.type(prevBtn, '{arrowleft}');
-  await waitFor(() => {
+  test('User can navigate with mouse', async () => {
     screen.getByText(/test your apps/i);
+    userEvent.click(screen.getByTestId('nextBtn'));
+    await waitFor(() => {
+      screen.getByText(/John Lubbock/i);
+    });
+    expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
+    
+    userEvent.click(screen.getByTestId('prevBtn'));
+    await waitFor(() => {
+      screen.getByText(/test your apps/i);
+    });
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  
+  test('User can navigate with keyboard', async () => {
+    screen.getByText(/test your apps/i);
+    userEvent.type(screen.getByTestId('nextBtn'), '{arrowright}');
+    await waitFor(() => {
+      screen.getByText(/John Lubbock/i);
+    });
+    expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
+
+    userEvent.type(screen.getByTestId('prevBtn'), '{arrowleft}');
+    await waitFor(() => {
+      screen.getByText(/test your apps/i);
+    });
   });
 });
