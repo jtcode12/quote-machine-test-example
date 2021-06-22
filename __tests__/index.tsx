@@ -46,5 +46,7 @@ describe('Index Page', () => {
     await waitFor(() => {
       screen.getByText(/test your apps/i);
     });
+
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 });
