@@ -1,22 +1,59 @@
-import { act, render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetch from 'jest-fetch-mock';
 import Index from '../pages';
 
 
 test('Index page', async () => {
-  fetch.mockResponseOnce(JSON.stringify({"status":200,"result":{"text":"What we see depends mainly on what we look for.","author":"John Lubbock","id":"4r1f69b38178g4b7"}}))
-  const { getByText, getByTestId } = render(<Index />);
-  getByText(/test your apps/i);
-  const prevBtn = getByTestId('prevBtn');
-  const nextBtn = getByTestId('nextBtn');
-  await act(async () => {
-    await userEvent.click(nextBtn);
+  /**
+   * Mock fetch responses
+   */
+  fetch.mockResponse(JSON.stringify({
+    status:200,
+    result: {
+      id: '4r1f69b38178g4b7',
+      text: 'What we see depends mainly on what we look for.',
+      author:'John Lubbock',
+    },
+  }));
+
+  render(<Index />);
+
+  /**
+   * Ensure core element rendered on the screen
+   */
+  screen.getByText(/test your apps/i);
+  const prevBtn = screen.getByTestId('prevBtn');
+  const nextBtn = screen.getByTestId('nextBtn');
+
+  /**
+   * Test forward button
+   */
+  userEvent.click(nextBtn);
+  await waitFor(() => {
+    expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
   });
-  expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
-  getByText(/John Lubbock/i);
-  await act(async () => {
-    await userEvent.click(prevBtn);
+  screen.getByText(/John Lubbock/i);
+
+  /**
+   * Test back button
+   */
+  userEvent.click(prevBtn);
+  await waitFor(() => {
+    screen.getByText(/test your apps/i);
   });
-  getByText(/test your apps/i);
+
+  /**
+   * Test right and left arrow key press
+   */
+  userEvent.type(nextBtn, '{arrowright}');
+  await waitFor(() => {
+    expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
+  });
+  screen.getByText(/John Lubbock/i);
+
+  userEvent.type(prevBtn, '{arrowleft}');
+  await waitFor(() => {
+    screen.getByText(/test your apps/i);
+  });
 });
