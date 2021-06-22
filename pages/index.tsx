@@ -39,8 +39,12 @@ const Index: FunctionComponent = () => {
         <cite sa-font-size="xl">{ quote.author }</cite>
       </div>
       <div className="quotebox-cta">
-        <button type="button" onClick={qm.goBack.bind(qm)} data-testid="prevBtn"><span x-direction="left">◄</span></button>
-        <button type="button" onClick={qm.goForward.bind(qm)} data-testid="nextBtn"><span x-direction="right">►</span></button>
+        <button type="button" onClick={qm.goBack.bind(qm)} aria-label="Previous Quote">
+          <span x-direction="left">◄</span>
+        </button>
+        <button type="button" onClick={qm.goForward.bind(qm)} aria-label="Next Quote">
+          <span x-direction="right">►</span>
+        </button>
       </div>
     </div>
   );

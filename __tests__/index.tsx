@@ -17,21 +17,17 @@ describe('Index Page', () => {
     render(<Index />);
   });
 
-  test('Ensure core elements rendered on the screen', () => {
-    screen.getByText(/test your apps/i);
-    screen.getByTestId('prevBtn');
-    screen.getByTestId('nextBtn');
-  });
-
   test('User can navigate with mouse', async () => {
     screen.getByText(/test your apps/i);
-    userEvent.click(screen.getByTestId('nextBtn'));
+    const next = screen.getByRole('button', { name: 'Next Quote' });
+    const prev = screen.getByRole('button', { name: 'Previous Quote' });
+    userEvent.click(next);
     await waitFor(() => {
       screen.getByText(/John Lubbock/i);
     });
     expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
     
-    userEvent.click(screen.getByTestId('prevBtn'));
+    userEvent.click(prev);
     await waitFor(() => {
       screen.getByText(/test your apps/i);
     });
@@ -40,13 +36,13 @@ describe('Index Page', () => {
   
   test('User can navigate with keyboard', async () => {
     screen.getByText(/test your apps/i);
-    userEvent.type(screen.getByTestId('nextBtn'), '{arrowright}');
+    userEvent.type(document.body, '{arrowright}');
     await waitFor(() => {
       screen.getByText(/John Lubbock/i);
     });
     expect(fetch).toHaveBeenCalledWith('https://cw-quotes.herokuapp.com/api/quotes/random');
 
-    userEvent.type(screen.getByTestId('prevBtn'), '{arrowleft}');
+    userEvent.type(document.body, '{arrowleft}');
     await waitFor(() => {
       screen.getByText(/test your apps/i);
     });
